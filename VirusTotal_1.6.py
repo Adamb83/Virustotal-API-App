@@ -1,3 +1,22 @@
+import subprocess
+import sys
+
+# List of required packages
+required_packages = [
+    'requests',
+    'scapy',
+    'cryptography',
+    'tk',
+    'psutil',
+]
+
+# Install missing packages
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
 import requests
 import scapy.all as scapy
 import time
@@ -22,13 +41,11 @@ REQUEST_DELAY_SECONDS = 60
 
 lock = Lock()
 
-
 def generate_key():
     """Generate and save an encryption key."""
     key = Fernet.generate_key()
     with open(KEY_FILE, 'wb') as key_file:
         key_file.write(key)
-
 
 def load_key():
     """Load the encryption key from the file."""
@@ -37,15 +54,12 @@ def load_key():
     with open(KEY_FILE, 'rb') as key_file:
         return key_file.read()
 
-
 encryption_key = load_key()
 cipher = Fernet(encryption_key)
-
 
 def encrypt_api_key(api_key):
     """Encrypt the API key."""
     return cipher.encrypt(api_key.encode()).decode()
-
 
 def decrypt_api_key(encrypted_api_key):
     """Decrypt the API key."""
@@ -55,7 +69,6 @@ def decrypt_api_key(encrypted_api_key):
         print(f"Error decrypting API key: {e}")
         return ''
 
-
 def load_config():
     """Load configuration from the file."""
     if os.path.exists(CONFIG_FILE):
@@ -63,12 +76,10 @@ def load_config():
             return json.load(file)
     return {}
 
-
 def save_config(config):
     """Save configuration to the file."""
     with open(CONFIG_FILE, 'w') as file:
         json.dump(config, file)
-
 
 def check_ip_on_virustotal(ip_address, api_key):
     """Check the IP address on VirusTotal."""
@@ -100,7 +111,6 @@ def check_ip_on_virustotal(ip_address, api_key):
         print(f"RequestException during VirusTotal check for IP: {ip_address}, Error: {str(e)}")
         return f"An error occurred during the request: {str(e)}", "undetected"
 
-
 def get_hostname(ip_address):
     """Get hostname from IP address."""
     try:
@@ -110,7 +120,6 @@ def get_hostname(ip_address):
     except socket.herror as e:
         print(f"Error getting hostname for IP {ip_address}: {e}")
         return "Unknown"
-
 
 def get_process_info(ip_address):
     """Get process information associated with an IP address."""
@@ -125,7 +134,6 @@ def get_process_info(ip_address):
                 return "Unknown", "Unknown"
     print(f"No connection found for IP {ip_address}")
     return "Unknown", "Unknown"
-
 
 def log_suspicious_ip(ip_address, result):
     """Log suspicious IP addresses with additional context."""
@@ -142,14 +150,12 @@ def log_suspicious_ip(ip_address, result):
         log_file.write(f"{result}\n\n")
     print(f"Logged suspicious IP: {ip_address} to {LOG_FILE}")
 
-
 def ensure_log_files_exist():
     """Ensure log files exist."""
     for log_file in [IP_LOG_FILE, PROCESSED_LOG_FILE, LOG_FILE]:
         if not os.path.exists(log_file):
             open(log_file, 'a').close()
             print(f"Created log file: {log_file}")
-
 
 def monitor_traffic(stop_event):
     """Monitor network traffic and log IPs."""
@@ -172,7 +178,6 @@ def monitor_traffic(stop_event):
                     print(f"Captured IP: {ip_address}")
 
     scapy.sniff(prn=process_packet, store=False, stop_filter=lambda _: stop_event.is_set())
-
 
 def process_ips(api_key, stop_event, result_textbox):
     """Process IPs from log file."""
@@ -210,7 +215,6 @@ def process_ips(api_key, stop_event, result_textbox):
             else:
                 time.sleep(1)
 
-
 def inject_test_ip():
     """Inject a known suspicious IP address for testing."""
     test_ip = "1.2.3.4"  # Replace with a known suspicious IP address
@@ -218,7 +222,6 @@ def inject_test_ip():
         with open(IP_LOG_FILE, 'a') as log_file:
             log_file.write(f"{test_ip}\n")
     print(f"Injected test IP: {test_ip}")
-
 
 def create_gui():
     """Main function to create the GUI and start monitoring."""
@@ -313,7 +316,6 @@ def create_gui():
     style.configure('TButton', font=('Helvetica', 12))
 
     root.mainloop()
-
 
 if __name__ == "__main__":
     gui_thread = Thread(target=create_gui)
