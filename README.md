@@ -9,4 +9,4 @@ processed_ip's logged file
 captured_ip's log file
 aswell as a "secret" file for saving your API key.
 
-Enjoy
+I tried to have the suspicious IP addresses highlighted in red but couldn't get it working..
