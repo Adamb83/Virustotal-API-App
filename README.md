@@ -10,3 +10,5 @@ captured_ip's log file
 aswell as a "secret" file for saving your API key.
 
 I tried to have the suspicious IP addresses highlighted in red but couldn't get it working..
+
+This would be awesome if visualsed with map location for IP addresses.
